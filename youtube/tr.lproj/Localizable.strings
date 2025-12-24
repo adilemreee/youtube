@@ -1,0 +1,116 @@
+/* 
+  Localizable.strings (Turkish)
+  youtube
+
+  Created by adil emre on 25.12.2025.
+*/
+
+// MARK: - General
+"app_name" = "YouTube İndirici";
+"ready" = "Hazır";
+"download" = "İndir";
+"cancel" = "İptal";
+"delete" = "Sil";
+"clear_all" = "Tümünü Temizle";
+"search" = "Ara";
+"settings" = "Ayarlar";
+
+// MARK: - Dashboard
+"dashboard" = "Ana Sayfa";
+"video_url" = "Video URL";
+"paste_video_url" = "Video URL'sini yapıştırın...";
+"fetch_info" = "Bilgi Al";
+"format" = "Format";
+"quality" = "Kalite";
+"add_to_queue" = "Kuyruğa Ekle";
+
+// MARK: - Downloads
+"downloads" = "İndirmeler";
+"active_downloads" = "Aktif İndirmeler";
+"no_active_downloads" = "Aktif indirme yok";
+"downloading" = "İndiriliyor";
+"completed" = "Tamamlandı";
+"failed" = "Başarısız";
+"pending" = "Bekliyor";
+
+// MARK: - History
+"history" = "Geçmiş";
+"download_history" = "İndirme Geçmişi";
+"videos_downloaded" = "video indirildi";
+"search_downloads" = "İndirilenlerde ara...";
+"no_download_history" = "İndirme geçmişi yok";
+"your_downloads_appear_here" = "İndirilen videolar burada görünecek";
+"file_not_found" = "Dosya bulunamadı";
+"show_in_finder" = "Finder'da Göster";
+"play" = "Oynat";
+"copy_url" = "URL'yi Kopyala";
+"delete_from_history" = "Geçmişten Sil";
+
+// MARK: - Playlists
+"playlists" = "Oynatma Listeleri";
+"playlist_downloader" = "Oynatma Listesi İndirici";
+"download_entire_playlists" = "Tüm oynatma listelerini indirin";
+"paste_playlist_url" = "Oynatma listesi URL'sini yapıştırın...";
+"fetch_playlist" = "Listeyi Al";
+"select_all" = "Tümünü Seç";
+"deselect_all" = "Seçimi Kaldır";
+"selected" = "seçili";
+"download_videos" = "Video İndir";
+
+// MARK: - Compressor
+"compressor" = "Sıkıştırıcı";
+"media_compressor" = "Medya Sıkıştırıcı";
+"compress_and_convert" = "Video ve ses dosyalarını sıkıştırın";
+"drop_file_here" = "Dosyayı buraya bırakın";
+"or_click_to_select" = "veya seçmek için tıklayın";
+"compression_level" = "Sıkıştırma Seviyesi";
+"low" = "Düşük";
+"medium" = "Orta";
+"high" = "Yüksek";
+"extract_audio" = "Ses Çıkar";
+"compress" = "Sıkıştır";
+"processing" = "İşleniyor...";
+
+// MARK: - Settings
+"general" = "Genel";
+"download_location" = "İndirme Konumu";
+"change" = "Değiştir...";
+"default_format" = "Varsayılan Format";
+"default_quality" = "Varsayılan Kalite";
+"appearance" = "Görünüm";
+"theme" = "Tema";
+"system" = "Sistem";
+"light" = "Açık";
+"dark" = "Koyu";
+"show_in_menu_bar" = "Menü Çubuğunda Göster";
+"launch_at_login" = "Oturum Açıldığında Başlat";
+"language" = "Dil";
+"dependencies" = "Bağımlılıklar";
+"installed" = "Yüklü";
+"not_found" = "Bulunamadı";
+"about" = "Hakkında";
+"version" = "Sürüm";
+"build" = "Derleme";
+"view_on_github" = "GitHub'da Görüntüle";
+
+// MARK: - Menu Bar
+"youtube_downloader" = "YouTube İndirici";
+"active_download" = "aktif indirme";
+"no_video_url_clipboard" = "Panoda video URL'si yok";
+"recent" = "Son İndirilenler";
+"open_app" = "Uygulamayı Aç";
+"quit" = "Çıkış";
+
+// MARK: - Notifications
+"download_complete" = "İndirme Tamamlandı";
+"download_failed" = "İndirme Başarısız";
+"download_error" = "İndirme Hatası";
+"video_downloaded_successfully" = "Video başarıyla indirildi";
+"error_occurred" = "Bir hata oluştu";
+
+// MARK: - Errors
+"empty_response" = "Boş yanıt";
+"invalid_json" = "Geçersiz JSON";
+"failed_to_parse" = "Ayrıştırma başarısız";
+"binary_not_found" = "Uygulama bulunamadı";
+"process_timeout" = "İşlem zaman aşımına uğradı";

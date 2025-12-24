@@ -8,6 +8,7 @@
 import Foundation
 import SwiftUI
 import SwiftData
+import UserNotifications
 
 /// Represents an active download with progress tracking
 @Observable
@@ -42,6 +43,12 @@ class DownloadManager {
     /// All active downloads
     var activeDownloads: [ActiveDownload] = []
     
+    /// Download queue for sequential processing
+    private var downloadQueue: [(url: String, format: String, quality: String)] = []
+    
+    /// Is currently processing the queue
+    var isProcessingQueue: Bool = false
+    
     /// Currently fetched video info
     var currentVideoInfo: VideoInfo?
     
@@ -56,6 +63,9 @@ class DownloadManager {
     
     /// Last error message
     var lastError: String?
+    
+    /// Model context for saving history
+    private var storedModelContext: ModelContext?
     
     /// Download settings
     var downloadPath: URL {
@@ -166,14 +176,53 @@ class DownloadManager {
     
     // MARK: - Download
     
-    /// Start a download
-    func startDownload(
+    /// Add a download to the queue
+    func addToQueue(
         url: String,
         format: String = "mp4",
         quality: String = "best",
         modelContext: ModelContext
+    ) {
+        storedModelContext = modelContext
+        let cleanURL = sanitizeURL(url)
+        downloadQueue.append((url: cleanURL, format: format, quality: quality))
+        appendLog("📥 Added to queue: \(cleanURL)\n")
+        appendLog("Queue size: \(downloadQueue.count)\n")
+        
+        // Start processing if not already
+        if !isProcessingQueue {
+            Task {
+                await processQueue()
+            }
+        }
+    }
+    
+    /// Process the download queue sequentially
+    private func processQueue() async {
+        guard !isProcessingQueue else { return }
+        isProcessingQueue = true
+        
+        while !downloadQueue.isEmpty {
+            let item = downloadQueue.removeFirst()
+            await startDownload(url: item.url, format: item.format, quality: item.quality)
+        }
+        
+        isProcessingQueue = false
+    }
+    
+    /// Start a download (internal - called by queue processor)
+    func startDownload(
+        url: String,
+        format: String = "mp4",
+        quality: String = "best",
+        modelContext: ModelContext? = nil
     ) async {
         let cleanURL = sanitizeURL(url)
+        
+        // Use stored context if not provided
+        if let ctx = modelContext {
+            storedModelContext = ctx
+        }
         
         let download = ActiveDownload(url: cleanURL)
         download.status = .fetching
@@ -225,17 +274,56 @@ class DownloadManager {
                 appendLog("\n✅ Download completed!\n")
                 
                 // Save to history
-                saveToHistory(download: download, format: format, quality: quality, modelContext: modelContext)
+                if let ctx = storedModelContext {
+                    saveToHistory(download: download, format: format, quality: quality, modelContext: ctx)
+                }
+                
+                // Send notification
+                sendNotification(title: "Download Complete", body: download.title.isEmpty ? "Video downloaded successfully" : download.title)
             } else {
                 download.status = .failed
                 download.error = "Download failed with exit code \(exitCode)"
                 appendLog("\n❌ Download failed\n")
+                sendNotification(title: "Download Failed", body: "An error occurred while downloading")
             }
         } catch {
             download.status = .failed
             download.error = error.localizedDescription
             appendLog("\n❌ Error: \(error.localizedDescription)\n")
+            sendNotification(title: "Download Error", body: error.localizedDescription)
         }
+    }
+    
+    // MARK: - Notifications
+    
+    /// Request notification permission
+    func requestNotificationPermission() {
+        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
+            if granted {
+                print("Notification permission granted")
+            }
+        }
+    }
+    
+    /// Send a local notification
+    private func sendNotification(title: String, body: String) {
+        let content = UNMutableNotificationContent()
+        content.title = title
+        content.body = body
+        content.sound = .default
+        
+        let request = UNNotificationRequest(
+            identifier: UUID().uuidString,
+            content: content,
+            trigger: nil // Immediate delivery
+        )
+        
+        UNUserNotificationCenter.current().add(request)
+    }
+    
+    /// Get queue count
+    var queueCount: Int {
+        downloadQueue.count
     }
     
     /// Cancel a download

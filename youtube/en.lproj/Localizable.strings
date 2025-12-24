@@ -1,0 +1,116 @@
+/* 
+  Localizable.strings (English)
+  youtube
+
+  Created by adil emre on 25.12.2025.
+*/
+
+// MARK: - General
+"app_name" = "YouTube Downloader";
+"ready" = "Ready";
+"download" = "Download";
+"cancel" = "Cancel";
+"delete" = "Delete";
+"clear_all" = "Clear All";
+"search" = "Search";
+"settings" = "Settings";
+
+// MARK: - Dashboard
+"dashboard" = "Dashboard";
+"video_url" = "Video URL";
+"paste_video_url" = "Paste video URL here...";
+"fetch_info" = "Fetch Info";
+"format" = "Format";
+"quality" = "Quality";
+"add_to_queue" = "Add to Queue";
+
+// MARK: - Downloads
+"downloads" = "Downloads";
+"active_downloads" = "Active Downloads";
+"no_active_downloads" = "No active downloads";
+"downloading" = "Downloading";
+"completed" = "Completed";
+"failed" = "Failed";
+"pending" = "Pending";
+
+// MARK: - History
+"history" = "History";
+"download_history" = "Download History";
+"videos_downloaded" = "videos downloaded";
+"search_downloads" = "Search downloads...";
+"no_download_history" = "No Download History";
+"your_downloads_appear_here" = "Your downloaded videos will appear here";
+"file_not_found" = "File not found";
+"show_in_finder" = "Show in Finder";
+"play" = "Play";
+"copy_url" = "Copy URL";
+"delete_from_history" = "Delete from History";
+
+// MARK: - Playlists
+"playlists" = "Playlists";
+"playlist_downloader" = "Playlist Downloader";
+"download_entire_playlists" = "Download entire playlists at once";
+"paste_playlist_url" = "Paste playlist URL...";
+"fetch_playlist" = "Fetch Playlist";
+"select_all" = "Select All";
+"deselect_all" = "Deselect All";
+"selected" = "selected";
+"download_videos" = "Download Video(s)";
+
+// MARK: - Compressor
+"compressor" = "Compressor";
+"media_compressor" = "Media Compressor";
+"compress_and_convert" = "Compress and convert video files";
+"drop_file_here" = "Drop file here";
+"or_click_to_select" = "or click to select";
+"compression_level" = "Compression Level";
+"low" = "Low";
+"medium" = "Medium";
+"high" = "High";
+"extract_audio" = "Extract Audio";
+"compress" = "Compress";
+"processing" = "Processing...";
+
+// MARK: - Settings
+"general" = "General";
+"download_location" = "Download Location";
+"change" = "Change...";
+"default_format" = "Default Format";
+"default_quality" = "Default Quality";
+"appearance" = "Appearance";
+"theme" = "Theme";
+"system" = "System";
+"light" = "Light";
+"dark" = "Dark";
+"show_in_menu_bar" = "Show in Menu Bar";
+"launch_at_login" = "Launch at Login";
+"language" = "Language";
+"dependencies" = "Dependencies";
+"installed" = "Installed";
+"not_found" = "Not Found";
+"about" = "About";
+"version" = "Version";
+"build" = "Build";
+"view_on_github" = "View on GitHub";
+
+// MARK: - Menu Bar
+"youtube_downloader" = "YouTube Downloader";
+"active_download" = "active download(s)";
+"no_video_url_clipboard" = "No video URL in clipboard";
+"recent" = "Recent";
+"open_app" = "Open App";
+"quit" = "Quit";
+
+// MARK: - Notifications
+"download_complete" = "Download Complete";
+"download_failed" = "Download Failed";
+"download_error" = "Download Error";
+"video_downloaded_successfully" = "Video downloaded successfully";
+"error_occurred" = "An error occurred";
+
+// MARK: - Errors
+"empty_response" = "Empty response";
+"invalid_json" = "Invalid JSON";
+"failed_to_parse" = "Failed to parse";
+"binary_not_found" = "Binary not found";
+"process_timeout" = "Process timed out";

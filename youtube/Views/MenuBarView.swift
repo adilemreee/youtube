@@ -91,8 +91,11 @@ struct MenuBarView: View {
                     Button("Download") {
                         if let url = clipboardManager.detectedURL {
                             Task {
-                                // Would need modelContext here
-                                // For now, just add to active downloads
+                                await downloadManager.startDownload(
+                                    url: url,
+                                    format: downloadManager.preferredFormat,
+                                    quality: downloadManager.preferredQuality
+                                )
                             }
                         }
                     }

@@ -54,6 +54,8 @@ struct DashboardView: View {
             if let url = clipboardManager.detectedURL, urlInput.isEmpty {
                 urlInput = url
             }
+            // Request notification permission
+            downloadManager.requestNotificationPermission()
         }
     }
     
@@ -241,18 +243,20 @@ struct DashboardView: View {
     
     private var downloadButton: some View {
         Button {
-            Task {
-                await downloadManager.startDownload(
-                    url: urlInput,
-                    format: selectedFormat.rawValue,
-                    quality: selectedQuality.rawValue,
-                    modelContext: modelContext
-                )
-            }
+            downloadManager.addToQueue(
+                url: urlInput,
+                format: selectedFormat.rawValue,
+                quality: selectedQuality.rawValue,
+                modelContext: modelContext
+            )
         } label: {
             HStack {
                 Image(systemName: "arrow.down.circle.fill")
-                Text("Download")
+                if downloadManager.queueCount > 0 {
+                    Text("Add to Queue (\(downloadManager.queueCount))")
+                } else {
+                    Text("Download")
+                }
             }
             .frame(maxWidth: .infinity)
         }
