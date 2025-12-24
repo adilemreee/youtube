@@ -2,23 +2,48 @@
 //  ContentView.swift
 //  youtube
 //
-//  Created by adil emre  on 25.12.2025.
+//  Created by adil emre on 25.12.2025.
 //
 
 import SwiftUI
+import SwiftData
 
 struct ContentView: View {
+    @State private var selectedItem: SidebarItem = .dashboard
+    @Environment(DownloadManager.self) private var downloadManager
+    
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+        NavigationSplitView {
+            SidebarView(selection: $selectedItem)
+        } detail: {
+            detailView
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
-        .padding()
+        .navigationSplitViewStyle(.balanced)
+        .frame(minWidth: 900, minHeight: 600)
+    }
+    
+    @ViewBuilder
+    private var detailView: some View {
+        switch selectedItem {
+        case .dashboard:
+            DashboardView()
+        case .downloads:
+            ActiveDownloadsView()
+        case .history:
+            HistoryView()
+        case .playlists:
+            PlaylistView()
+        case .compressor:
+            CompressorView()
+        case .settings:
+            SettingsView()
+        }
     }
 }
 
 #Preview {
     ContentView()
+        .environment(DownloadManager())
+        .modelContainer(for: DownloadItem.self)
 }
