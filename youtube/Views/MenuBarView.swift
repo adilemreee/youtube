@@ -2,7 +2,7 @@
 //  MenuBarView.swift
 //  youtube
 //
-//  Created by adil emre on 25.12.2025.
+//  Created by Adil Emre Karayürek on 25.12.2025.
 //
 
 import SwiftUI
@@ -55,7 +55,7 @@ struct MenuBarView: View {
                 .foregroundStyle(.red)
             
             VStack(alignment: .leading, spacing: 2) {
-                Text("YouTube Downloader")
+                Text("VidFlow")
                     .font(.headline)
                 
                 if downloadManager.hasActiveDownloads {

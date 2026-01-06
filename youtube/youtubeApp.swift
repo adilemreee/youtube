@@ -2,7 +2,7 @@
 //  youtubeApp.swift
 //  youtube
 //
-//  Created by adil emre on 25.12.2025.
+//  Created by Adil Emre Karayürek on 25.12.2025.
 //
 
 import SwiftUI
@@ -40,7 +40,7 @@ struct youtubeApp: App {
         }
         
         // Menu Bar Extra
-        MenuBarExtra("YouTube Downloader", systemImage: "play.rectangle.fill") {
+        MenuBarExtra("VidFlow", systemImage: "play.rectangle.fill") {
             MenuBarView()
                 .environment(downloadManager)
         }

@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>VidFlow Sunucu Yönetim Kılavuzu</title>
+  <style>
+    /* Default styles provided by pandoc.
+    ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+    */
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid #1a1a1a;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+    /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { color: #008000; } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { color: #008000; font-weight: bold; } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">VidFlow Sunucu Yönetim Kılavuzu</h1>
+</header>
+<h1 id="vidflow-sunucu-yönetim-kılavuzu">VidFlow Sunucu Yönetim
+Kılavuzu</h1>
+<p><strong>Tarih:</strong> 25 Aralık 2025</p>
+<hr />
+<h2 id="sunucu-bilgileri">📋 Sunucu Bilgileri</h2>
+<table>
+<thead>
+<tr>
+<th>Bilgi</th>
+<th>Değer</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>IP Adresi</strong></td>
+<td><code>193.35.154.183</code></td>
+</tr>
+<tr>
+<td><strong>Kullanıcı</strong></td>
+<td><code>root</code></td>
+</tr>
+<tr>
+<td><strong>Şifre</strong></td>
+<td><code>Ab20752490.</code></td>
+</tr>
+<tr>
+<td><strong>Domain</strong></td>
+<td>https://vidflow.adilemre.xyz</td>
+</tr>
+<tr>
+<td><strong>Uygulama Dizini</strong></td>
+<td><code>/var/www/vidflow</code></td>
+</tr>
+<tr>
+<td><strong>Node.js</strong></td>
+<td>v20.19.6</td>
+</tr>
+<tr>
+<td><strong>yt-dlp</strong></td>
+<td>2025.12.08</td>
+</tr>
+<tr>
+<td><strong>FFmpeg</strong></td>
+<td>6.1.1</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="ssh-bağlantısı">🔌 SSH Bağlantısı</h2>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ssh</span> root@193.35.154.183</span></code></pre></div>
+<p>Şifre: <code>Ab20752490.</code></p>
+<hr />
+<h2 id="pm2-uygulama-yönetimi">📦 PM2 Uygulama Yönetimi</h2>
+<table>
+<thead>
+<tr>
+<th>Komut</th>
+<th>Açıklama</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>pm2 list</code></td>
+<td>Tüm uygulamaları listele</td>
+</tr>
+<tr>
+<td><code>pm2 restart vidflow</code></td>
+<td>VidFlow’u yeniden başlat</td>
+</tr>
+<tr>
+<td><code>pm2 stop vidflow</code></td>
+<td>VidFlow’u durdur</td>
+</tr>
+<tr>
+<td><code>pm2 start vidflow</code></td>
+<td>VidFlow’u başlat</td>
+</tr>
+<tr>
+<td><code>pm2 logs vidflow</code></td>
+<td>Canlı logları izle</td>
+</tr>
+<tr>
+<td><code>pm2 logs vidflow --lines 100</code></td>
+<td>Son 100 satır log</td>
+</tr>
+<tr>
+<td><code>pm2 monit</code></td>
+<td>CPU/RAM izleme paneli</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="cloudflare-tunnel-yönetimi">🌐 Cloudflare Tunnel Yönetimi</h2>
+<table>
+<thead>
+<tr>
+<th>Komut</th>
+<th>Açıklama</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>systemctl status cloudflared</code></td>
+<td>Durumu kontrol et</td>
+</tr>
+<tr>
+<td><code>systemctl restart cloudflared</code></td>
+<td>Yeniden başlat</td>
+</tr>
+<tr>
+<td><code>systemctl stop cloudflared</code></td>
+<td>Durdur</td>
+</tr>
+<tr>
+<td><code>systemctl start cloudflared</code></td>
+<td>Başlat</td>
+</tr>
+<tr>
+<td><code>journalctl -u cloudflared -f</code></td>
+<td>Logları izle</td>
+</tr>
+<tr>
+<td><code>journalctl -u cloudflared --since "1 hour ago"</code></td>
+<td>Son 1 saat log</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="site-güncelleme-deployment">🚀 SİTE GÜNCELLEME (DEPLOYMENT)</h2>
+<p>Lokal bilgisayarından siteyi güncelledikten sonra sunucuya yüklemek
+için:</p>
+<h3 id="yöntem-1-scp-ile-dosya-yükleme-önerilen">Yöntem 1: SCP ile Dosya
+Yükleme (Önerilen)</h3>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Tüm vidflow-web klasörünü sunucuya yükle</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">scp</span> <span class="at">-r</span> /Users/adilemre/Documents/projelerim/youtube/vidflow-web/<span class="pp">*</span> root@193.35.154.183:/var/www/vidflow/</span></code></pre></div>
+<p>Sonra sunucuda:</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ssh</span> root@193.35.154.183</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> /var/www/vidflow</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="ex">npm</span> install          <span class="co"># Yeni paket varsa</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="ex">pm2</span> restart vidflow  <span class="co"># Uygulamayı yeniden başlat</span></span></code></pre></div>
+<h3 id="yöntem-2-tek-tek-dosya-güncelleme">Yöntem 2: Tek Tek Dosya
+Güncelleme</h3>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Örnek: Sadece server.js güncelle</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">scp</span> /Users/adilemre/Documents/projelerim/youtube/vidflow-web/server.js root@193.35.154.183:/var/www/vidflow/</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Örnek: CSS güncelle</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="fu">scp</span> /Users/adilemre/Documents/projelerim/youtube/vidflow-web/public/css/style.css root@193.35.154.183:/var/www/vidflow/public/css/</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Örnek: JS güncelle</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="fu">scp</span> /Users/adilemre/Documents/projelerim/youtube/vidflow-web/public/js/app.js root@193.35.154.183:/var/www/vidflow/public/js/</span></code></pre></div>
+<h3 id="yöntem-3-rsync-ile-senkronize-et">Yöntem 3: Rsync ile Senkronize
+Et</h3>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">rsync</span> <span class="at">-avz</span> <span class="at">--delete</span> /Users/adilemre/Documents/projelerim/youtube/vidflow-web/ root@193.35.154.183:/var/www/vidflow/</span></code></pre></div>
+<h3 id="güncelleme-sonrası-kontrol">Güncelleme Sonrası Kontrol</h3>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ssh</span> root@193.35.154.183</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="ex">pm2</span> restart vidflow</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="ex">pm2</span> logs vidflow      <span class="co"># Hata var mı kontrol et</span></span></code></pre></div>
+<hr />
+<h2 id="sistem-kontrolleri">🔧 Sistem Kontrolleri</h2>
+<table>
+<thead>
+<tr>
+<th>Komut</th>
+<th>Açıklama</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>df -h</code></td>
+<td>Disk kullanımı</td>
+</tr>
+<tr>
+<td><code>free -h</code></td>
+<td>RAM kullanımı</td>
+</tr>
+<tr>
+<td><code>htop</code></td>
+<td>CPU ve süreç izleme</td>
+</tr>
+<tr>
+<td><code>ss -tlnp \| grep 3000</code></td>
+<td>Port 3000 kontrolü</td>
+</tr>
+<tr>
+<td><code>ps aux \| grep node</code></td>
+<td>Node süreçleri</td>
+</tr>
+<tr>
+<td><code>uptime</code></td>
+<td>Sunucu uptime</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="yazılım-güncelleme">🔄 Yazılım Güncelleme</h2>
+<h3 id="yt-dlp-güncelle-önemli">yt-dlp Güncelle (Önemli!)</h3>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pip3</span> install <span class="at">-U</span> yt-dlp</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="ex">pm2</span> restart vidflow</span></code></pre></div>
+<h3 id="node.js-paketlerini-güncelle">Node.js Paketlerini Güncelle</h3>
+<div class="sourceCode" id="cb8"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> /var/www/vidflow</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="ex">npm</span> update</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="ex">pm2</span> restart vidflow</span></code></pre></div>
+<h3 id="sistem-güncelle">Sistem Güncelle</h3>
+<div class="sourceCode" id="cb9"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="ex">apt</span> update <span class="kw">&amp;&amp;</span> <span class="ex">apt</span> upgrade <span class="at">-y</span></span></code></pre></div>
+<h3 id="cloudflared-güncelle">Cloudflared Güncelle</h3>
+<div class="sourceCode" id="cb10"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="ex">curl</span> <span class="at">-L</span> <span class="at">--output</span> cloudflared.deb https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64.deb</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="ex">dpkg</span> <span class="at">-i</span> cloudflared.deb</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span> cloudflared.deb</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="ex">systemctl</span> restart cloudflared</span></code></pre></div>
+<hr />
+<h2 id="sorun-giderme">🛠️ Sorun Giderme</h2>
+<h3 id="site-açılmıyorsa">Site Açılmıyorsa</h3>
+<p><strong>1. PM2 Kontrolü:</strong></p>
+<div class="sourceCode" id="cb11"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pm2</span> list</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="co"># &quot;errored&quot; veya &quot;stopped&quot; ise:</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="ex">pm2</span> restart vidflow</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="ex">pm2</span> logs vidflow</span></code></pre></div>
+<p><strong>2. Cloudflared Kontrolü:</strong></p>
+<div class="sourceCode" id="cb12"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="ex">systemctl</span> status cloudflared</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Çalışmıyorsa:</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="ex">systemctl</span> restart cloudflared</span></code></pre></div>
+<p><strong>3. Port Kontrolü:</strong></p>
+<div class="sourceCode" id="cb13"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="ex">ss</span> <span class="at">-tlnp</span> <span class="kw">|</span> <span class="fu">grep</span> 3000</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Boş dönerse uygulama çalışmıyor</span></span></code></pre></div>
+<h3 id="video-indirilmiyorsa">Video İndirilmiyorsa</h3>
+<div class="sourceCode" id="cb14"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># yt-dlp&#39;yi test et</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="ex">yt-dlp</span> <span class="at">--version</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="ex">yt-dlp</span> <span class="at">-F</span> <span class="st">&quot;https://www.youtube.com/watch?v=dQw4w9WgXcQ&quot;</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Güncelle</span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="ex">pip3</span> install <span class="at">-U</span> yt-dlp</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a><span class="ex">pm2</span> restart vidflow</span></code></pre></div>
+<h3 id="disk-doluysa">Disk Doluysa</h3>
+<div class="sourceCode" id="cb15"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Disk durumu</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="fu">df</span> <span class="at">-h</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="co"># İndirilen dosyaları temizle</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span> <span class="at">-rf</span> /var/www/vidflow/downloads/<span class="pp">*</span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Sistem loglarını temizle</span></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a><span class="ex">journalctl</span> <span class="at">--vacuum-time</span><span class="op">=</span>7d</span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Büyük dosyaları bul</span></span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a><span class="fu">du</span> <span class="at">-sh</span> /var/www/vidflow/<span class="pp">*</span></span></code></pre></div>
+<h3 id="sunucu-yeniden-başladıysa">Sunucu Yeniden Başladıysa</h3>
+<p>Otomatik başlaması gerekiyor, ama kontrol et:</p>
+<div class="sourceCode" id="cb16"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pm2</span> list</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="ex">systemctl</span> status cloudflared</span></code></pre></div>
+<hr />
+<h2 id="yedekleme">💾 Yedekleme</h2>
+<h3 id="uygulama-yedeği-al">Uygulama Yedeği Al</h3>
+<div class="sourceCode" id="cb17"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Sunucudan bilgisayara indir</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="fu">scp</span> <span class="at">-r</span> root@193.35.154.183:/var/www/vidflow ~/Desktop/vidflow-backup</span></code></pre></div>
+<h3 id="veritabanıconfig-yedeği-varsa">Veritabanı/Config Yedeği
+(varsa)</h3>
+<div class="sourceCode" id="cb18"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">scp</span> root@193.35.154.183:/var/www/vidflow/.env ~/Desktop/vidflow-env-backup</span></code></pre></div>
+<hr />
+<h2 id="güvenlik">🔐 Güvenlik</h2>
+<h3 id="şifre-değiştir">Şifre Değiştir</h3>
+<div class="sourceCode" id="cb19"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">passwd</span> root</span></code></pre></div>
+<h3 id="firewall-durumu">Firewall Durumu</h3>
+<div class="sourceCode" id="cb20"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="ex">ufw</span> status</span></code></pre></div>
+<h3 id="ssh-key-ekle-önerilen">SSH Key Ekle (Önerilen)</h3>
+<div class="sourceCode" id="cb21"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Lokalde key oluştur</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ssh-keygen</span> <span class="at">-t</span> ed25519</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Sunucuya kopyala</span></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a><span class="ex">ssh-copy-id</span> root@193.35.154.183</span></code></pre></div>
+<hr />
+<h2 id="kurulum-özeti-25-aralık-2025">📝 Kurulum Özeti (25 Aralık
+2025)</h2>
+<h3 id="yapılan-işlemler">Yapılan İşlemler:</h3>
+<ol type="1">
+<li><p><strong>Sistem Kontrolü</strong> - Node.js, yt-dlp, FFmpeg
+doğrulandı</p></li>
+<li><p><strong>Cloudflared Kurulumu:</strong></p>
+<div class="sourceCode" id="cb22"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="ex">curl</span> <span class="at">-L</span> <span class="at">--output</span> cloudflared.deb https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64.deb</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="ex">dpkg</span> <span class="at">-i</span> cloudflared.deb</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="ex">cloudflared</span> service install <span class="op">&lt;</span>TOKEN<span class="op">&gt;</span></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a><span class="ex">systemctl</span> enable cloudflared</span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a><span class="ex">systemctl</span> start cloudflared</span></code></pre></div></li>
+<li><p><strong>Cloudflare Dashboard Ayarları:</strong></p>
+<ul>
+<li>Zero Trust → Networks → Tunnels → vidflow</li>
+<li>Public Hostname: <code>vidflow.adilemre.xyz</code> →
+<code>localhost:3000</code></li>
+</ul></li>
+</ol>
+<hr />
+<h2 id="önemli-linkler">🔗 Önemli Linkler</h2>
+<ul>
+<li><strong>Site:</strong> https://vidflow.adilemre.xyz</li>
+<li><strong>Direkt IP:</strong> http://193.35.154.183:3000</li>
+<li><strong>Cloudflare Dashboard:</strong>
+https://dash.cloudflare.com</li>
+<li><strong>Zero Trust Panel:</strong>
+https://one.dash.cloudflare.com</li>
+</ul>
+<hr />
+<h2 id="hızlı-referans">📞 Hızlı Referans</h2>
+<div class="sourceCode" id="cb23"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># SSH Bağlan</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ssh</span> root@193.35.154.183</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Site Güncelle (Mac&#39;ten)</span></span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a><span class="fu">scp</span> <span class="at">-r</span> /Users/adilemre/Documents/projelerim/youtube/vidflow-web/<span class="pp">*</span> root@193.35.154.183:/var/www/vidflow/ <span class="kw">&amp;&amp;</span> <span class="fu">ssh</span> root@193.35.154.183 <span class="st">&quot;pm2 restart vidflow&quot;</span></span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Durumu Kontrol Et</span></span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a><span class="fu">ssh</span> root@193.35.154.183 <span class="st">&quot;pm2 list &amp;&amp; systemctl status cloudflared --no-pager&quot;</span></span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Logları Gör</span></span>
+<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a><span class="fu">ssh</span> root@193.35.154.183 <span class="st">&quot;pm2 logs vidflow --lines 50&quot;</span></span>
+<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-13"><a href="#cb23-13" aria-hidden="true" tabindex="-1"></a><span class="co"># yt-dlp Güncelle</span></span>
+<span id="cb23-14"><a href="#cb23-14" aria-hidden="true" tabindex="-1"></a><span class="fu">ssh</span> root@193.35.154.183 <span class="st">&quot;pip3 install -U yt-dlp &amp;&amp; pm2 restart vidflow&quot;</span></span></code></pre></div>
+</body>
+</html>

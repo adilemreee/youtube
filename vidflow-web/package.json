@@ -1,0 +1,17 @@
+{
+  "name": "vidflow-web",
+  "version": "1.0.0",
+  "description": "VidFlow Web - YouTube Downloader Web Application",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "author": "Adil Emre Karayürek",
+  "license": "MIT",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "uuid": "^9.0.0"
+  }
+}

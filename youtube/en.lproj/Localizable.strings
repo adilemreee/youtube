@@ -94,7 +94,7 @@
 "view_on_github" = "View on GitHub";
 
 // MARK: - Menu Bar
-"youtube_downloader" = "YouTube Downloader";
+"youtube_downloader" = "VidFlow";
 "active_download" = "active download(s)";
 "no_video_url_clipboard" = "No video URL in clipboard";
 "recent" = "Recent";

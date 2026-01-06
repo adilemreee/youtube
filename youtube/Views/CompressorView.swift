@@ -2,7 +2,7 @@
 //  CompressorView.swift
 //  youtube
 //
-//  Created by adil emre on 25.12.2025.
+//  Created by Adil Emre Karayürek on 25.12.2025.
 //
 
 import SwiftUI
@@ -226,25 +226,52 @@ struct CompressorView: View {
     // MARK: - Output Section
     
     private var outputSection: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: 12) {
+            // Header
             HStack {
-                Text("Output")
-                    .font(.headline)
+                HStack(spacing: 8) {
+                    Image(systemName: "text.alignleft")
+                        .foregroundStyle(.secondary)
+                    Text("Output")
+                        .font(.headline)
+                }
                 
                 Spacer()
                 
+                // Status indicator
                 if let job = compressorService.currentJob {
-                    Text(job.status)
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
+                    HStack(spacing: 6) {
+                        if job.isComplete {
+                            Image(systemName: "checkmark.circle.fill")
+                                .foregroundStyle(.green)
+                        } else {
+                            ProgressView()
+                                .scaleEffect(0.7)
+                        }
+                        Text(job.status)
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 5)
+                    .background(
+                        Capsule()
+                            .fill(.ultraThinMaterial)
+                    )
                 }
             }
             
+            // Content
             ScrollView {
                 Text(compressorService.outputLog)
+                    .font(.system(.body, design: .default))
+                    .foregroundStyle(.secondary)
+                    .frame(maxWidth: .infinity, alignment: .leading)
             }
-            .terminalStyle()
+            .padding(16)
             .frame(height: 150)
+            .background(.ultraThinMaterial)
+            .clipShape(RoundedRectangle(cornerRadius: 12))
         }
         .cardStyle()
     }

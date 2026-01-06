@@ -2,7 +2,7 @@
 //  SettingsView.swift
 //  youtube
 //
-//  Created by adil emre on 25.12.2025.
+//  Created by Adil Emre Karayürek on 25.12.2025.
 //
 
 import SwiftUI
@@ -108,6 +108,7 @@ struct SettingsView: View {
             
             // About Section
             Section("Hakkında / About") {
+                LabeledContent("Geliştirici / Developer", value: "Adil Emre Karayürek")
                 LabeledContent("Sürüm / Version", value: "1.0.0")
                 LabeledContent("Derleme / Build", value: "1")
                 

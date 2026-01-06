@@ -94,7 +94,7 @@
 "view_on_github" = "GitHub'da Görüntüle";
 
 // MARK: - Menu Bar
-"youtube_downloader" = "YouTube İndirici";
+"youtube_downloader" = "VidFlow";
 "active_download" = "aktif indirme";
 "no_video_url_clipboard" = "Panoda video URL'si yok";
 "recent" = "Son İndirilenler";

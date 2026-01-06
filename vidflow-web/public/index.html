@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VidFlow - Video Downloader</title>
+    <meta name="description" content="Download videos from YouTube and other platforms">
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">
+                <svg class="logo-icon" viewBox="0 0 24 24" fill="none">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z" fill="url(#gradient)"/>
+                    <defs>
+                        <linearGradient id="gradient" x1="2" y1="2" x2="22" y2="22">
+                            <stop offset="0%" stop-color="#ff6b6b"/>
+                            <stop offset="100%" stop-color="#ee5a5a"/>
+                        </linearGradient>
+                    </defs>
+                </svg>
+                <span class="logo-text">VidFlow</span>
+            </div>
+            <nav class="nav">
+                <button class="nav-btn active" data-tab="download">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/>
+                    </svg>
+                    İndir
+                </button>
+                <button class="nav-btn" data-tab="history">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"/>
+                        <polyline points="12,6 12,12 16,14"/>
+                    </svg>
+                    Geçmiş
+                </button>
+            </nav>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main">
+            <!-- Download Tab -->
+            <section class="tab-content active" id="download-tab">
+                <!-- URL Input Card -->
+                <div class="card url-card">
+                    <h2 class="card-title">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/>
+                            <path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/>
+                        </svg>
+                        Video URL
+                    </h2>
+                    <div class="url-input-group">
+                        <input type="text" id="url-input" class="url-input" 
+                               placeholder="Video URL'sini buraya yapıştırın...">
+                        <button id="paste-btn" class="icon-btn" title="Yapıştır">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M16 4h2a2 2 0 012 2v14a2 2 0 01-2 2H6a2 2 0 01-2-2V6a2 2 0 012-2h2"/>
+                                <rect x="8" y="2" width="8" height="4" rx="1" ry="1"/>
+                            </svg>
+                        </button>
+                        <button id="fetch-btn" class="icon-btn primary" title="Bilgi Al">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="11" cy="11" r="8"/>
+                                <path d="M21 21l-4.35-4.35"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <p class="error-message" id="error-message"></p>
+                </div>
+
+                <!-- Video Preview Card (Hidden initially) -->
+                <div class="card video-card hidden" id="video-preview">
+                    <div class="video-info">
+                        <div class="thumbnail-wrapper">
+                            <img id="video-thumbnail" src="" alt="Thumbnail">
+                            <span class="duration" id="video-duration">0:00</span>
+                        </div>
+                        <div class="video-details">
+                            <h3 class="video-title" id="video-title">Video Başlığı</h3>
+                            <p class="video-uploader" id="video-uploader">Kanal Adı</p>
+                            <div class="video-meta">
+                                <span class="meta-item" id="video-views">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                                        <circle cx="12" cy="12" r="3"/>
+                                    </svg>
+                                    0 görüntüleme
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Format Selection Card -->
+                <div class="card format-card">
+                    <div class="format-group">
+                        <h3 class="format-title">Format</h3>
+                        <div class="format-options">
+                            <label class="format-option">
+                                <input type="radio" name="format" value="mp4" checked>
+                                <span class="format-label">MP4</span>
+                            </label>
+                            <label class="format-option">
+                                <input type="radio" name="format" value="webm">
+                                <span class="format-label">WebM</span>
+                            </label>
+                            <label class="format-option">
+                                <input type="radio" name="format" value="mp3">
+                                <span class="format-label">MP3</span>
+                            </label>
+                            <label class="format-option">
+                                <input type="radio" name="format" value="m4a">
+                                <span class="format-label">M4A</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="format-group" id="quality-group">
+                        <h3 class="format-title">Kalite</h3>
+                        <select id="quality-select" class="quality-select">
+                            <option value="best">En İyi</option>
+                            <option value="4K">4K</option>
+                            <option value="1080p" selected>1080p</option>
+                            <option value="720p">720p</option>
+                            <option value="480p">480p</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Download Button -->
+                <button id="download-btn" class="download-btn" disabled>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/>
+                    </svg>
+                    <span>İndir</span>
+                </button>
+
+                <!-- Active Downloads -->
+                <div class="card downloads-card hidden" id="active-downloads">
+                    <h2 class="card-title">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/>
+                        </svg>
+                        Aktif İndirmeler
+                    </h2>
+                    <div class="downloads-list" id="downloads-list"></div>
+                </div>
+
+                <!-- Terminal Output -->
+                <div class="card terminal-card">
+                    <div class="terminal-header">
+                        <h2 class="card-title">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="4 17 10 11 4 5"/>
+                                <line x1="12" y1="19" x2="20" y2="19"/>
+                            </svg>
+                            Output
+                        </h2>
+                        <button id="clear-terminal" class="icon-btn small" title="Temizle">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="18" y1="6" x2="6" y2="18"/>
+                                <line x1="6" y1="6" x2="18" y2="18"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="terminal-content" id="terminal-content">
+                        <p class="terminal-placeholder">İndirme başlamak için hazır...</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- History Tab -->
+            <section class="tab-content" id="history-tab">
+                <div class="card history-card">
+                    <div class="history-header">
+                        <h2 class="card-title">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"/>
+                                <polyline points="12,6 12,12 16,14"/>
+                            </svg>
+                            İndirme Geçmişi
+                        </h2>
+                        <button id="clear-history" class="icon-btn danger" title="Geçmişi Temizle">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="3 6 5 6 21 6"/>
+                                <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="history-list" id="history-list">
+                        <p class="empty-message">Henüz indirme geçmişi yok.</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>&copy; 2025 Adil Emre Karayürek • VidFlow Web</p>
+        </footer>
+    </div>
+
+    <script src="js/app.js"></script>
+</body>
+</html>

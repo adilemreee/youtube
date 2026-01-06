@@ -2,7 +2,7 @@
 //  DashboardView.swift
 //  youtube
 //
-//  Created by adil emre on 25.12.2025.
+//  Created by Adil Emre Karayürek on 25.12.2025.
 //
 
 import SwiftUI
@@ -39,9 +39,7 @@ struct DashboardView: View {
                 downloadButton
                 
                 // Terminal Output
-                if showTerminal {
-                    terminalSection
-                }
+                terminalSection
                 
                 Spacer(minLength: 20)
             }
@@ -75,7 +73,7 @@ struct DashboardView: View {
                     )
                 
                 VStack(alignment: .leading) {
-                    Text("YouTube Downloader")
+                    Text("VidFlow")
                         .font(.title.bold())
                     Text("Download videos from YouTube and other platforms")
                         .font(.subheadline)
@@ -267,39 +265,74 @@ struct DashboardView: View {
     // MARK: - Terminal Section
     
     private var terminalSection: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: 12) {
+            // Header
             HStack {
-                Text("Output")
-                    .font(.headline)
+                HStack(spacing: 8) {
+                    Image(systemName: "text.alignleft")
+                        .foregroundStyle(.secondary)
+                    Text("Output")
+                        .font(.headline)
+                }
                 
                 Spacer()
                 
-                Button {
-                    showTerminal.toggle()
-                } label: {
-                    Image(systemName: showTerminal ? "chevron.down" : "chevron.right")
+                // Status badge
+                if !downloadManager.terminalOutput.isEmpty {
+                    Text("Active")
+                        .font(.caption2)
+                        .fontWeight(.medium)
+                        .foregroundStyle(.white)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
+                        .background(
+                            Capsule()
+                                .fill(Color.green)
+                        )
                 }
-                .buttonStyle(.plain)
                 
+                // Clear button
                 Button {
                     downloadManager.terminalOutput = ""
                 } label: {
-                    Image(systemName: "trash")
+                    Image(systemName: "xmark.circle.fill")
+                        .foregroundStyle(.tertiary)
                 }
                 .buttonStyle(.plain)
                 .disabled(downloadManager.terminalOutput.isEmpty)
+                .help("Clear output")
+                
+                // Toggle button
+                Button {
+                    withAnimation(.easeInOut(duration: 0.2)) {
+                        showTerminal.toggle()
+                    }
+                } label: {
+                    Image(systemName: showTerminal ? "chevron.up.circle.fill" : "chevron.down.circle.fill")
+                        .foregroundStyle(.tertiary)
+                }
+                .buttonStyle(.plain)
+                .help(showTerminal ? "Hide output" : "Show output")
             }
             
+            // Content
             if showTerminal {
                 ScrollViewReader { proxy in
                     ScrollView {
-                        Text(downloadManager.terminalOutput.isEmpty ? "Ready..." : downloadManager.terminalOutput)
+                        Text(downloadManager.terminalOutput.isEmpty ? "Ready to download..." : downloadManager.terminalOutput)
+                            .font(.system(.body, design: .default))
+                            .foregroundStyle(downloadManager.terminalOutput.isEmpty ? .tertiary : .secondary)
+                            .frame(maxWidth: .infinity, alignment: .leading)
                             .id("terminal-bottom")
                     }
-                    .terminalStyle()
-                    .frame(height: 200)
+                    .padding(16)
+                    .frame(height: 180)
+                    .background(.ultraThinMaterial)
+                    .clipShape(RoundedRectangle(cornerRadius: 12))
                     .onChange(of: downloadManager.terminalOutput) { _, _ in
-                        proxy.scrollTo("terminal-bottom", anchor: .bottom)
+                        withAnimation {
+                            proxy.scrollTo("terminal-bottom", anchor: .bottom)
+                        }
                     }
                 }
             }
