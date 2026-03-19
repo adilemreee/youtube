@@ -152,7 +152,7 @@ class ShellRunner: @unchecked Sendable {
         _ command: String,
         arguments: [String],
         workingDirectory: URL? = nil,
-        onOutput: @escaping @Sendable (String) -> Void
+        onOutput: @escaping @MainActor (String) -> Void
     ) async throws -> Int32 {
         guard let binaryPath = findBinary(command) else {
             throw ShellError.binaryNotFound(command)
@@ -186,7 +186,7 @@ class ShellRunner: @unchecked Sendable {
                 let data = handle.availableData
                 guard !data.isEmpty else { return }
                 if let output = String(data: data, encoding: .utf8) {
-                    DispatchQueue.main.async {
+                    Task { @MainActor in
                         onOutput(output)
                     }
                 }

@@ -6,11 +6,9 @@
 //
 
 import SwiftUI
-import SwiftData
 
 struct DashboardView: View {
     @Environment(DownloadManager.self) private var downloadManager
-    @Environment(\.modelContext) private var modelContext
     @State private var urlInput: String = ""
     @State private var selectedFormat: FormatOption = .mp4
     @State private var selectedQuality: QualityOption = .q1080p
@@ -244,8 +242,7 @@ struct DashboardView: View {
             downloadManager.addToQueue(
                 url: urlInput,
                 format: selectedFormat.rawValue,
-                quality: selectedQuality.rawValue,
-                modelContext: modelContext
+                quality: selectedQuality.rawValue
             )
         } label: {
             HStack {

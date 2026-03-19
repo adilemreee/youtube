@@ -68,7 +68,7 @@ class CompressorService {
     
     /// Check if FFmpeg is available
     func checkFFmpegAvailable() async -> Bool {
-        await shell.findBinary("ffmpeg") != nil
+        shell.findBinary("ffmpeg") != nil
     }
     
     /// Convert video to audio

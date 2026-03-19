@@ -188,8 +188,7 @@ struct MenuBarView: View {
     private var footerSection: some View {
         HStack {
             Button {
-                // Open main window
-                // This would use openWindow or similar
+                openWindow(id: "main")
             } label: {
                 Label("Open App", systemImage: "macwindow")
             }

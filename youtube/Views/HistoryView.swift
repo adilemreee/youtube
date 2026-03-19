@@ -6,17 +6,19 @@
 //
 
 import SwiftUI
-import SwiftData
 import AVFoundation
 import AppKit
 
 struct HistoryView: View {
-    @Environment(\.modelContext) private var modelContext
-    @Query(sort: \DownloadItem.dateCreated, order: .reverse) private var items: [DownloadItem]
+    @Environment(DownloadHistoryStore.self) private var historyStore
     @State private var searchText: String = ""
     @State private var hoveredItem: UUID?
     
-    var filteredItems: [DownloadItem] {
+    private var items: [DownloadHistoryItem] {
+        historyStore.items
+    }
+    
+    var filteredItems: [DownloadHistoryItem] {
         if searchText.isEmpty {
             return items
         }
@@ -151,7 +153,7 @@ struct HistoryView: View {
     // MARK: - Context Menu
     
     @ViewBuilder
-    private func contextMenuItems(for item: DownloadItem) -> some View {
+    private func contextMenuItems(for item: DownloadHistoryItem) -> some View {
         Button {
             openInFinder(item)
         } label: {
@@ -181,36 +183,34 @@ struct HistoryView: View {
     
     // MARK: - Actions
     
-    private func openInFinder(_ item: DownloadItem) {
+    private func openInFinder(_ item: DownloadHistoryItem) {
         let url = URL(fileURLWithPath: item.filePath)
         if FileManager.default.fileExists(atPath: item.filePath) {
             NSWorkspace.shared.activateFileViewerSelecting([url])
         }
     }
     
-    private func playFile(_ item: DownloadItem) {
+    private func playFile(_ item: DownloadHistoryItem) {
         let url = URL(fileURLWithPath: item.filePath)
         if FileManager.default.fileExists(atPath: item.filePath) {
             NSWorkspace.shared.open(url)
         }
     }
     
-    private func copyURL(_ item: DownloadItem) {
+    private func copyURL(_ item: DownloadHistoryItem) {
         NSPasteboard.general.clearContents()
         NSPasteboard.general.setString(item.url, forType: .string)
     }
     
-    private func deleteItem(_ item: DownloadItem) {
+    private func deleteItem(_ item: DownloadHistoryItem) {
         withAnimation(.easeOut(duration: 0.2)) {
-            modelContext.delete(item)
+            historyStore.delete(item)
         }
     }
     
     private func clearHistory() {
         withAnimation {
-            for item in items {
-                modelContext.delete(item)
-            }
+            historyStore.clear()
         }
     }
 }
@@ -218,7 +218,7 @@ struct HistoryView: View {
 // MARK: - History Item Row
 
 struct HistoryItemRow: View {
-    let item: DownloadItem
+    let item: DownloadHistoryItem
     let isHovered: Bool
     let onDelete: () -> Void
     
@@ -479,6 +479,19 @@ struct HistoryItemRow: View {
 
 #Preview {
     HistoryView()
-        .modelContainer(for: DownloadItem.self)
+        .environment(
+            DownloadHistoryStore(
+                initialItems: [
+                    DownloadHistoryItem(
+                        title: "Sample Video",
+                        url: "https://example.com/video",
+                        filePath: "/tmp/sample.mp4",
+                        format: "mp4",
+                        quality: "1080p",
+                        fileSize: 42_000_000
+                    )
+                ]
+            )
+        )
         .frame(width: 700, height: 500)
 }

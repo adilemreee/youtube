@@ -180,8 +180,8 @@ struct SettingsView: View {
     }
     
     private func checkDependencies() async {
-        ytdlpAvailable = await shell.findBinary("yt-dlp") != nil
-        ffmpegAvailable = await shell.findBinary("ffmpeg") != nil
+        ytdlpAvailable = shell.findBinary("yt-dlp") != nil
+        ffmpegAvailable = shell.findBinary("ffmpeg") != nil
     }
     
     private func checkLaunchAtLoginStatus() {

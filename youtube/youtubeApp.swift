@@ -12,15 +12,21 @@ import SwiftData
 struct youtubeApp: App {
     @State private var downloadManager = DownloadManager()
     @State private var settings = AppSettings.shared
+    private let historyStore = DownloadHistoryStore.shared
     
     var body: some Scene {
+        let menuBarVisibility = Binding(
+            get: { settings.showInMenuBar },
+            set: { settings.showInMenuBar = $0 }
+        )
+        
         // Main Window
-        WindowGroup {
+        WindowGroup(id: "main") {
             ContentView()
                 .environment(downloadManager)
+                .environment(historyStore)
                 .preferredColorScheme(settings.theme.colorScheme)
         }
-        .modelContainer(for: DownloadItem.self)
         .windowStyle(.automatic)
         .windowToolbarStyle(.unified)
         .commands {
@@ -40,15 +46,17 @@ struct youtubeApp: App {
         }
         
         // Menu Bar Extra
-        MenuBarExtra("VidFlow", systemImage: "play.rectangle.fill") {
+        MenuBarExtra("VidFlow", systemImage: "play.rectangle.fill", isInserted: menuBarVisibility) {
             MenuBarView()
                 .environment(downloadManager)
+                .environment(historyStore)
         }
         .menuBarExtraStyle(.window)
         
         // Settings Window
         Settings {
             SettingsView()
+                .environment(historyStore)
         }
     }
 }

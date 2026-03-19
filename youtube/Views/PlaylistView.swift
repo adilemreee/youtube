@@ -6,11 +6,9 @@
 //
 
 import SwiftUI
-import SwiftData
 
 struct PlaylistView: View {
     @Environment(DownloadManager.self) private var downloadManager
-    @Environment(\.modelContext) private var modelContext
     @State private var playlistURL: String = ""
     @State private var selectedEntries: Set<String> = []
     @State private var selectedFormat: FormatOption = .mp4
@@ -77,7 +75,7 @@ struct PlaylistView: View {
             Button {
                 Task {
                     selectedEntries.removeAll()
-                    await downloadManager.fetchVideoInfo(url: playlistURL)
+                    await downloadManager.fetchPlaylistInfo(url: playlistURL)
                     // Auto-select all
                     if let entries = playlist?.entries {
                         selectedEntries = Set(entries.map { $0.id })
@@ -273,8 +271,7 @@ struct PlaylistView: View {
                 await downloadManager.startDownload(
                     url: url,
                     format: selectedFormat.rawValue,
-                    quality: selectedQuality.rawValue,
-                    modelContext: modelContext
+                    quality: selectedQuality.rawValue
                 )
             }
         }
@@ -284,6 +281,5 @@ struct PlaylistView: View {
 #Preview {
     PlaylistView()
         .environment(DownloadManager())
-        .modelContainer(for: DownloadItem.self)
         .frame(width: 700, height: 600)
 }

@@ -7,7 +7,6 @@
 
 import Foundation
 import SwiftUI
-import SwiftData
 import UserNotifications
 
 /// Represents an active download with progress tracking
@@ -64,8 +63,8 @@ class DownloadManager {
     /// Last error message
     var lastError: String?
     
-    /// Model context for saving history
-    private var storedModelContext: ModelContext?
+    /// Shared history store
+    private let historyStore: DownloadHistoryStore
     
     /// Download settings
     var downloadPath: URL {
@@ -83,6 +82,10 @@ class DownloadManager {
     var preferredQuality: String {
         get { UserDefaults.standard.string(forKey: "preferredQuality") ?? "1080p" }
         set { UserDefaults.standard.set(newValue, forKey: "preferredQuality") }
+    }
+    
+    init(historyStore: DownloadHistoryStore = .shared) {
+        self.historyStore = historyStore
     }
     
     // MARK: - URL Sanitization
@@ -174,16 +177,76 @@ class DownloadManager {
         isFetching = false
     }
     
+    /// Fetch playlist information from URL
+    func fetchPlaylistInfo(url: String) async {
+        let cleanURL = sanitizeURL(url)
+        
+        isFetching = true
+        lastError = nil
+        currentVideoInfo = nil
+        currentPlaylistInfo = nil
+        terminalOutput = ""
+        
+        appendLog("Fetching playlist info for: \(cleanURL)\n")
+        appendLog("Please wait...\n")
+        
+        do {
+            let output = try await shell.run(
+                "yt-dlp",
+                arguments: [
+                    "--dump-single-json",
+                    "--yes-playlist",
+                    "--no-warnings",
+                    cleanURL
+                ]
+            )
+            
+            appendLog("Got response, parsing...\n")
+            
+            guard let data = output.data(using: .utf8), !output.isEmpty else {
+                appendLog("Error: Empty response from yt-dlp\n")
+                lastError = "Empty response"
+                isFetching = false
+                return
+            }
+            
+            do {
+                if let json = try JSONSerialization.jsonObject(with: data) as? [String: Any],
+                   let playlistInfo = parsePlaylistInfo(from: json, sourceURL: cleanURL) {
+                    currentPlaylistInfo = playlistInfo
+                    appendLog("✅ Found playlist: \(playlistInfo.title)\n")
+                    appendLog("Entries: \(playlistInfo.entries.count)\n")
+                    if let uploader = playlistInfo.uploader {
+                        appendLog("Uploader: \(uploader)\n")
+                    }
+                } else {
+                    appendLog("⚠️ Could not parse playlist info from JSON\n")
+                    lastError = "Failed to parse playlist info"
+                }
+            } catch {
+                appendLog("⚠️ JSON parse error: \(error.localizedDescription)\n")
+                lastError = "Failed to parse playlist info"
+            }
+            
+        } catch let error as ShellError {
+            lastError = error.localizedDescription
+            appendLog("❌ Error: \(error.localizedDescription)\n")
+        } catch {
+            lastError = error.localizedDescription
+            appendLog("❌ Error: \(error.localizedDescription)\n")
+        }
+        
+        isFetching = false
+    }
+    
     // MARK: - Download
     
     /// Add a download to the queue
     func addToQueue(
         url: String,
         format: String = "mp4",
-        quality: String = "best",
-        modelContext: ModelContext
+        quality: String = "best"
     ) {
-        storedModelContext = modelContext
         let cleanURL = sanitizeURL(url)
         downloadQueue.append((url: cleanURL, format: format, quality: quality))
         appendLog("📥 Added to queue: \(cleanURL)\n")
@@ -214,15 +277,9 @@ class DownloadManager {
     func startDownload(
         url: String,
         format: String = "mp4",
-        quality: String = "best",
-        modelContext: ModelContext? = nil
+        quality: String = "best"
     ) async {
         let cleanURL = sanitizeURL(url)
-        
-        // Use stored context if not provided
-        if let ctx = modelContext {
-            storedModelContext = ctx
-        }
         
         let download = ActiveDownload(url: cleanURL)
         download.status = .fetching
@@ -273,10 +330,7 @@ class DownloadManager {
                 download.progress = 1.0
                 appendLog("\n✅ Download completed!\n")
                 
-                // Save to history
-                if let ctx = storedModelContext {
-                    saveToHistory(download: download, format: format, quality: quality, modelContext: ctx)
-                }
+                saveToHistory(download: download, format: format, quality: quality)
                 
                 // Send notification
                 sendNotification(title: "Download Complete", body: download.title.isEmpty ? "Video downloaded successfully" : download.title)
@@ -414,7 +468,7 @@ class DownloadManager {
         }
     }
     
-    private func saveToHistory(download: ActiveDownload, format: String, quality: String, modelContext: ModelContext) {
+    private func saveToHistory(download: ActiveDownload, format: String, quality: String) {
         // Use the captured file path, or construct one as fallback
         var finalPath = download.filePath
         if finalPath.isEmpty {
@@ -428,7 +482,8 @@ class DownloadManager {
             fileSize = size
         }
         
-        let item = DownloadItem(
+        let item = DownloadHistoryItem(
+            id: download.id,
             title: download.title.isEmpty ? "Unknown" : download.title,
             url: download.url,
             filePath: finalPath,
@@ -436,16 +491,82 @@ class DownloadManager {
             quality: quality,
             dateCreated: Date(),
             fileSize: fileSize,
-            status: .completed
+            duration: nil
         )
-        modelContext.insert(item)
+        historyStore.add(item)
         
         appendLog("Saved to history: \(finalPath)\n")
+    }
+    
+    private func parsePlaylistInfo(from dict: [String: Any], sourceURL: String) -> PlaylistInfo? {
+        guard let id = dict["id"] as? String,
+              let title = dict["title"] as? String else {
+            return nil
+        }
         
-        do {
-            try modelContext.save()
-        } catch {
-            appendLog("Failed to save to history: \(error.localizedDescription)\n")
+        let playlistHost = URL(string: sourceURL)?.host?.lowercased() ?? ""
+        let entryDictionaries = dict["entries"] as? [[String: Any]] ?? []
+        
+        let entries: [PlaylistEntry] = entryDictionaries.compactMap { entry -> PlaylistEntry? in
+            guard let entryID = entry["id"] as? String else {
+                return nil
+            }
+            
+            return PlaylistEntry(
+                id: entryID,
+                title: entry["title"] as? String,
+                duration: doubleValue(from: entry["duration"]),
+                thumbnail: entry["thumbnail"] as? String,
+                url: resolvePlaylistEntryURL(from: entry, playlistHost: playlistHost)
+            )
+        }
+        
+        guard !entries.isEmpty else {
+            return nil
+        }
+        
+        return PlaylistInfo(
+            id: id,
+            title: title,
+            thumbnail: dict["thumbnail"] as? String,
+            uploader: dict["uploader"] as? String ?? dict["channel"] as? String,
+            entries: entries
+        )
+    }
+    
+    private func resolvePlaylistEntryURL(from dict: [String: Any], playlistHost: String) -> String? {
+        if let webpageURL = dict["webpage_url"] as? String, !webpageURL.isEmpty {
+            return webpageURL
+        }
+        
+        if let originalURL = dict["original_url"] as? String, !originalURL.isEmpty {
+            return originalURL
+        }
+        
+        if let url = dict["url"] as? String, !url.isEmpty {
+            if url.hasPrefix("http://") || url.hasPrefix("https://") {
+                return url
+            }
+            
+            let extractorKey = (dict["extractor_key"] as? String ?? "").lowercased()
+            if extractorKey.contains("youtube") || playlistHost.contains("youtu") {
+                return "https://www.youtube.com/watch?v=\(url)"
+            }
+        }
+        
+        return nil
+    }
+    
+    private func doubleValue(from value: Any?) -> Double? {
+        switch value {
+        case let double as Double:
+            return double
+        case let int as Int:
+            return Double(int)
+        case let number as NSNumber:
+            return number.doubleValue
+        default:
+            return nil
         }
     }
     
